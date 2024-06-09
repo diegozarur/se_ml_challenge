@@ -1,0 +1,56 @@
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      target: final
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env
+    volumes:
+      - ./app/${UPLOAD_FOLDER}:/data/app/${UPLOAD_FOLDER}
+    depends_on:
+      - redis
+
+  worker:
+    container_name: worker
+    build:
+      context: .
+      target: final
+    command: celery -A run.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - ./app/${UPLOAD_FOLDER}:/data/app/${UPLOAD_FOLDER}
+    depends_on:
+      - api
+      - redis
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --loglevel notice
+
+  flower:
+    image: mher/flower
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    depends_on:
+      - redis
+  ui:
+    container_name: ui
+    build:
+      context: ./ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    environment:
+      - VITE_REACT_APP_API_BASE_URL=http://localhost:5002/api
