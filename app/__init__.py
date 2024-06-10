@@ -11,8 +11,8 @@ from config import Config
 def make_celery(app):
     celery = Celery(
         app.import_name,
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
+        backend=app.config["CELERY_RESULT_BACKEND"],
+        broker=app.config["CELERY_BROKER_URL"],
     )
     celery.conf.update(app.config)
 
@@ -30,7 +30,7 @@ def create_app(config_name: Config) -> Flask:
     app.config.from_object(config_name)
 
     CORS(app)
-    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(api_bp, url_prefix="/api")
 
     upload_directory = os.path.join(app.root_path, config_name.UPLOAD_FOLDER)
 

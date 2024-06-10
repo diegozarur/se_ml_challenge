@@ -13,5 +13,4 @@ langchain-text-splitters
 langchain_chroma
 langchain_openai
 pypdf
-pytest 
-pytest-flask
+pytest
