@@ -4,7 +4,7 @@ from pathlib import Path
 resources = Path(__file__).parent / "docs"
 
 
-@pytest.mark.task("test_api")
+@pytest.mark.task("api")
 class TestRoutes:
 
     def test_upload_document(self, client):
